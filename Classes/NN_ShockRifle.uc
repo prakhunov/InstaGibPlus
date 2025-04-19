@@ -15,6 +15,33 @@ var float LastFiredTime;
 // For Special Shock Beam
 var int HitCounter;
 
+var IGPlus_WeaponImplementation WImp;
+var WeaponSettingsRepl WSettings;
+
+simulated final function WeaponSettingsRepl FindWeaponSettings() {
+	local WeaponSettingsRepl S;
+
+	foreach AllActors(class'WeaponSettingsRepl', S)
+		return S;
+
+	return none;
+}
+
+simulated final function WeaponSettingsRepl GetWeaponSettings() {
+	if (WSettings != none)
+		return WSettings;
+
+	WSettings = FindWeaponSettings();
+	return WSettings;
+}
+
+simulated function PostBeginPlay() {
+	super(ShockRifle).PostBeginPlay();
+
+	foreach AllActors(class'IGPlus_WeaponImplementation', WImp)
+		break;
+}
+
 simulated function RenderOverlays(Canvas Canvas)
 {
 	local bbPlayer bbP;
@@ -594,10 +621,10 @@ function ProcessTraceHit(Actor Other, Vector HitLocation, Vector HitNormal, Vect
 		Spawn(class'ut_RingExplosion5',,, HitLocation+HitNormal*8,rotator(HitNormal));
 	}
 
-	/* if ( (Other != self) && (Other != Owner) && (Other != None) )
+	if ( (Other != self) && (Other != Owner) && (Other != None) )
 	{
-		Other.TakeDamage(class'UTPure'.default.ShockDamagePri, PawnOwner, HitLocation, 60000.0*X, MyDamageType);
-	} */
+		Other.TakeDamage(GetWeaponSettings().ShockBeamDamage, PawnOwner, HitLocation, 60000.0*X, MyDamageType);
+	}
 
 	if (Pawn(Other) != None && Other != Owner && Pawn(Other).Health > 0)
 	{	// We hit a pawn that wasn't the owner or dead. (How can you hit yourself? :P)
