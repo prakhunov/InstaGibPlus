@@ -4,7 +4,7 @@
 // Created by UClasses - (C) 2000-2001 by meltdown@thirdtower.com
 // ===============================================================
 
-class NN_ShockRifle extends ShockRifle;
+class NN_ShockDOMRifle extends ShockRifle;
 
 var bool bNewNet;								// Self-explanatory lol
 var Rotator GV;
@@ -82,7 +82,6 @@ simulated function bool ClientFire(float Value)
 		}
 		if ( (AmmoType == None) && (AmmoName != None) )
 		{
-			AmmoType.AmmoAmount = 50;
 			// ammocheck
 			GiveAmmo(Pawn(Owner));
 		}
@@ -124,7 +123,6 @@ simulated function bool ClientAltFire(float Value)
 		if ( (AmmoType == None) && (AmmoName != None) )
 		{
 			// ammocheck
-			AmmoType.AmmoAmount = 50;
 			GiveAmmo(Pawn(Owner));
 		}
 		if ( AmmoType.AmmoAmount > 0 )
@@ -318,7 +316,7 @@ simulated function bool NN_ProcessTraceHit(Actor Other, Vector HitLocation, Vect
 	if (bbPlayer(Owner) != None)
 		bbPlayer(Owner).xxClientDemoFix(None, class'ut_RingExplosion5',HitLocation+HitNormal*8,,, rotator(HitNormal));
 
-	class'bbPlayerStatics'.static.PlayClientHitResponse(Pawn(Owner), Other, HitDamage, ST_MyDamageType);
+	class'bbPlayerStatics'.static.PlayClientHitResponse(Pawn(Owner), Other, HitDamage, MyDamageType);
 	
 	return false;
 }
@@ -563,9 +561,6 @@ state Active
 	}
 }*/
 
-
-
-
 auto state Pickup
 {
 	ignores AnimEnd;
@@ -597,4 +592,5 @@ simulated function DoRingExplosion5(PlayerPawn Pwner, vector HitLocation, vector
 defaultproperties
 {
 	bNewNet=True
+	PickupAmmoCount=50
 }

@@ -38,8 +38,11 @@ jobs:
             echo ("PKG_NAME="+$repoName+"_pr_"+$ref.SubString(10, $ref.Length - 16)) >> $env:GITHUB_ENV
             echo ("PKG_VER=pr_"+$ref.SubString(10, $ref.Length - 16)) >> $env:GITHUB_ENV
           } else {
-            echo ("PKG_NAME="+$repoName+"_"+$ref.SubString(11)+"-"+$sha.SubString(0,8)) >> $env:GITHUB_ENV
-            echo ("PKG_VER="+$ref.SubString(11)+"-"+$sha.SubString(0,8)) >> $env:GITHUB_ENV
+            # echo ("PKG_NAME="+$repoName+"_"+$ref.SubString(11)+"-"+$sha.SubString(0,8)) >> $env:GITHUB_ENV
+            # echo ("PKG_VER="+$ref.SubString(11)+"-"+$sha.SubString(0,8)) >> $env:GITHUB_ENV
+            # echo ("PREVIEW_VER="+$ref.SubString(11)+"-"+$prever) >> $env:GITHUB_ENV
+            echo ("PKG_NAME="+$repoName+"_"+$ref.SubString(11)) >> $env:GITHUB_ENV
+            echo ("PKG_VER="+$ref.SubString(11)) >> $env:GITHUB_ENV
             echo ("PREVIEW_VER="+$ref.SubString(11)+"-"+$prever) >> $env:GITHUB_ENV
           }
 
