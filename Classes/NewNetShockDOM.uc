@@ -12,7 +12,8 @@ function InitializeSettings() {
 function PreBeginPlay() {    
     PreFix = class'StringUtils'.static.PackageOfObject(self);
     Log("NewNetShockDOM determined prefix="$PreFix, 'IGPlus');
-    AmmoString=PreFix$".NN_ShockCoreSDOM";
+    WeaponString=PreFix$".NN_ShockDOMRifle";
+    AmmoString=PreFix$".ST_ShockCoreSDOM";
 
     super.PreBeginPlay();    
 
@@ -31,7 +32,6 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 {
     super.CheckReplacement(Other, bSuperRelevant);
 
-    // TODO: Maybe it would be better to just destroy other weapons?
     if (Other.IsA('Weapon'))
         return CheckReplaceWeapon(Other) == false;
 
@@ -62,8 +62,14 @@ function bool CheckReplaceWeapon(Actor A) {
     if (W == none)
         return false;
 
-    if (W.Class != class'NN_ShockDOMRifle') {
+    if (W.Class == class'NN_ShockDOMRifle') {
+        return false;
+    }
+
+    if (W.Class == class'ShockRifle' || W.Class == class'ASMD' || W.Class == class'NN_ShockRifle') {
         return DoReplace(W, class'NN_ShockDOMRifle');
+    } else {
+        W.destroy();
     }
 
     return false;
@@ -100,6 +106,7 @@ function bool DoReplacePickup(Pickup Other, class<Pickup> ReplacementClass) {
 
     P = Other.Spawn(ReplacementClass, Other.Owner, Other.Tag);
     if (P != none) {
+        // TODO: What is this
         /*if (DelaySpawnNotifyReplace <= 0)
             SN.SetReplace(Other, P);*/
         return true;
@@ -123,6 +130,10 @@ function bool DoReplace(Weapon Other, class<Weapon> ReplacementClass) {
         W.RespawnTime = Other.RespawnTime;
         W.PickupAmmoCount = Other.PickupAmmoCount;
         W.bRotatingPickup = Other.bRotatingPickup;
+
+        // TODO: What is this
+        /*if (DelaySpawnNotifyReplace <= 0)
+            SN.SetReplace(Other, W);    */
         return true;
     }
     return false;
@@ -131,7 +142,8 @@ function bool DoReplace(Weapon Other, class<Weapon> ReplacementClass) {
 
 defaultproperties
 {
+    bReplaceWeapons=True
     WeaponName=NN_ShockDOMRifle
-    AmmoName=NN_ShockCoreSDOM
+    AmmoName=ST_ShockCoreSDOM
     DefaultWeapon=class'NN_ShockDOMRifle'
 }

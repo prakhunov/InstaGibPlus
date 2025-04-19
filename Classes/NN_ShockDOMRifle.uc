@@ -35,4 +35,5 @@ defaultproperties
 {
 	bNewNet=True
 	PickupAmmoCount=50
+	AmmoName=Class'ST_ShockCoreSDOM'
 }
