@@ -12,8 +12,8 @@ simulated function bool NN_ProcessTraceHit(Actor Other, Vector HitLocation, Vect
 	if (Owner.IsA('Bot'))
 		return false;
 
-	bbP = bbPlayer(Owner);
-	if (bbP == none) return false;
+	/*bbP = bbPlayer(Owner);
+	if (bbP == none) return false;*/
 
 	super.NN_ProcessTraceHit(Other, HitLocation, HitNormal, X, Y, Z);
 	class'bbPlayerStatics'.static.PlayClientHitResponse(Pawn(Owner), Other, HitDamage, MyDamageType);
