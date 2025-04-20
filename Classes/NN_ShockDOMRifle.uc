@@ -24,6 +24,10 @@ simulated function bool ClientAltFire(float Value)
 {
     return false;
 }
+simulated function PlaySelect ()
+{
+    return;
+}
 
 defaultproperties
 {
