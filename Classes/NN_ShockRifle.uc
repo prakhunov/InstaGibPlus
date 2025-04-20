@@ -231,7 +231,7 @@ simulated function bool NN_ProcessTraceHit(Actor Other, Vector HitLocation, Vect
 	local vector Offset;
 	local vector HitOffset;
 	local bool zzbNN_Combo; 
-	
+
 	zzbNN_Combo = false;
 
 	if (Owner.IsA('Bot'))
@@ -567,6 +567,8 @@ simulated function bool ClientAltFire(float Value)
 function TraceFire( float Accuracy )
 {
 	local bbPlayer bbP;
+	local bool bShockCombo;
+	local NN_ShockProjOwnerHidden NNSP;
 	local actor NN_Other;
 	local vector NN_HitLoc, HitNormal, StartTrace, EndTrace, X,Y,Z;
 
