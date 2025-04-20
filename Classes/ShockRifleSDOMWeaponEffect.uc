@@ -17,19 +17,11 @@ static function Play(
 
 	if (Player.Level.NetMode == NM_DedicatedServer) return;
 
-	if (SourcePRI.Owner != none && Settings.BeamOriginMode == 1) {
-		SmokeLocation = GetPlayerLocation(SourcePRI.Owner) + SourceOffset;
-	} else {
-		SmokeLocation = SourceLocation;
-	}
-
-	if (Target != none && Settings.BeamDestinationMode == 1) {
-		HitLocation = GetPlayerLocation(Target) + TargetOffset;
-	} else {
-		HitLocation = TargetLocation;
-	}
+	SmokeLocation = SourceLocation;
+	HitLocation = TargetLocation;
 
 	PlayBeam(Player, Settings, SourcePRI, SmokeLocation, HitLocation, HitNormal);
+	PlayRing(Player, Settings, SourcePRI, HitLocation, HitNormal);
 }
 
 static function PlayBeam(
@@ -53,62 +45,31 @@ static function PlayBeam(
 	SmokeRotation = rotator(DVector);
 	SmokeRotation.roll = Rand(65535);
 
-	if (Settings.cShockBeam == 3) return;
-	if (Settings.bHideOwnBeam &&
-		(SourcePRI.Owner == Player || SourcePRI.Owner == Player.ViewTarget) &&
-		Player.bBehindView == false)
-		return;
-
 	Smoke = class'ClientShockBeam'.static.AllocBeam(Player);
 	if (Smoke == none) return;
 	Smoke.SetLocation(SmokeLocation);
 	Smoke.SetRotation(SmokeRotation);
 	MoveAmount = DVector / NumPoints;
 
-	if (Settings.cShockBeam == 1) {
-		Smoke.SetProperties(
-			-1,
-			1,
-			1,
-			0.27,
-			MoveAmount,
-			NumPoints - 1,
-			Settings.bBeamEnableLight);
+	Smoke.SetProperties(
+		-1,
+		1,
+		1,
+		0.27,
+		MoveAmount,
+		NumPoints - 1,
+		Settings.bBeamEnableLight);
+}
 
-	} else if (Settings.cShockBeam == 2) {
-		Smoke.SetProperties(
-			SourcePRI.Team,
-			Settings.BeamScale,
-			Settings.BeamFadeCurve,
-			Settings.BeamDuration,
-			MoveAmount,
-			NumPoints - 1,
-			Settings.bBeamEnableLight);
-
-	} else if (Settings.cShockBeam == 4) {
-		Smoke.SetProperties(
-			SourcePRI.Team,
-			Settings.BeamScale,
-			Settings.BeamFadeCurve,
-			Settings.BeamDuration,
-			MoveAmount,
-			0,
-			Settings.bBeamEnableLight);
-
-		for (NumPoints = NumPoints - 1; NumPoints > 0; NumPoints--) {
-			SmokeLocation += MoveAmount;
-			Smoke = class'ClientShockBeam'.static.AllocBeam(Player);
-			if (Smoke == None) break;
-			Smoke.SetLocation(SmokeLocation);
-			Smoke.SetRotation(SmokeRotation);
-			Smoke.SetProperties(
-				SourcePRI.Team,
-				Settings.BeamScale,
-				Settings.BeamFadeCurve,
-				Settings.BeamDuration,
-				MoveAmount,
-				0,
-				Settings.bBeamEnableLight);
-		}
-	}
+static function PlayRing(
+	PlayerPawn Player,
+	ClientSettings Settings,
+	PlayerReplicationInfo SourcePRI,
+	vector HitLocation,
+	vector HitNormal
+) {
+	local Actor A;
+	A = Player.Spawn(class'ut_RingExplosion5',,, HitLocation+HitNormal*8,rotator(HitNormal));
+	A.RemoteRole = ROLE_None;
+	// DO not allow other SSRingtypes in SDOM
 }
