@@ -119,64 +119,10 @@ simulated function bool ClientFire(float Value)
 
 simulated function NN_TraceFire()
 {
-	/*local vector HitLocation, HitDiff, HitNormal, StartTrace, EndTrace, X,Y,Z;
-	local actor Other;
-	local bool zzbNN_Combo;
-	local bbPlayer bbP;
-	local bbPlayer zzbbP;
-	local actor zzOther;
-	local int oRadius,oHeight;
-	local vector zzX,zzY,zzZ,zzStartTrace,zzEndTrace,zzHitLocation,zzHitNormal;
-
-	if (Owner.IsA('Bot'))
-		return;
-
-	yModInit();
-
-	bbP = bbPlayer(Owner);
-	if (bbP == None)
-		return;
-
-	GetAxes(GV,X,Y,Z);
-	StartTrace = Owner.Location + CDO + yMod * Y + FireOffset.Z * Z;
-	EndTrace = StartTrace + (100000 * vector(GV));
-
-	//for (P = Level.PawnList; P != None; P = P.NextPawn)
-	//	P.SetCollisionSize(P.CollisionRadius * ShockRadius / 100, P.CollisionHeight);
-
-	Other = bbP.NN_TraceShot(HitLocation,HitNormal,EndTrace,StartTrace,Pawn(Owner));
-	if (Other.IsA('Pawn'))
-	{
-		HitDiff = HitLocation - Other.Location;
-
-		zzbbP = bbPlayer(Other);
-		if (zzbbP != None)
-		{
-			GetAxes(GV,zzX,zzY,zzZ);
-			zzStartTrace = Owner.Location + CDO + yMod * zzY + FireOffset.Z * zzZ;
-			zzEndTrace = zzStartTrace + (100000 * vector(GV));
-			oRadius = zzbbP.CollisionRadius;
-			oHeight = zzbbP.CollisionHeight;
-			zzbbP.SetCollisionSize(zzbbP.CollisionRadius * 0.85, zzbbP.CollisionHeight * 0.85);
-			zzOther = bbP.NN_TraceShot(zzHitLocation,zzHitNormal,zzEndTrace,zzStartTrace,Pawn(Owner));
-			zzbbP.SetCollisionSize(oRadius, oHeight);
-			//bbP.xxChecked(Other != zzOther);
-		}
-	}
-
-	zzbNN_Combo = NN_ProcessTraceHit(Other, HitLocation, HitNormal, vector(GV),Y,Z);
-	if (zzbNN_Combo)
-		bbP.xxNN_Fire(Level.TimeSeconds, NN_ShockProj(Other).zzNN_ProjIndex, bbP.Location, bbP.Velocity, bbP.ViewRotation, Other, HitLocation, HitDiff, true);
-	else
-		bbP.xxNN_Fire(Level.TimeSeconds, -1, bbP.Location, bbP.Velocity, bbP.ViewRotation, Other, HitLocation, HitDiff, false);
-	if (Other == bbP.zzClientTTarget)
-		bbP.zzClientTTarget.TakeDamage(0, Pawn(Owner), HitLocation, 60000.0*vector(GV), MyDamageType);
-
-	//for (P = Level.PawnList; P != None; P = P.NextPawn)
-	//	P.SetCollisionSize(P.Default.CollisionRadius, P.CollisionHeight);*/
 	local vector HitLocation, HitDiff, HitNormal, StartTrace, EndTrace, X,Y,Z;
 	local actor Other;
 	local bbPlayer bbP;
+	local bool zzbNN_Combo;
 
 	if (Owner.IsA('Bot'))
 		return;
@@ -271,30 +217,6 @@ simulated function bool NN_ProcessTraceHit(Actor Other, Vector HitLocation, Vect
 	}
 	return zzbNN_Combo;
 }
-
-/*simulated function NN_SpawnEffect(vector HitLocation, vector SmokeLocation, vector HitNormal)
-{
-	local ShockBeam Smoke;
-	local Vector DVector;
-	local int NumPoints;
-	local rotator SmokeRotation;
-
-	if (Owner.IsA('Bot'))
-		return;
-
-	DVector = HitLocation - SmokeLocation;
-	NumPoints = VSize(DVector)/135.0;
-	if ( NumPoints < 1 )
-		return;
-	SmokeRotation = rotator(DVector);
-	SmokeRotation.roll = Rand(65535);
-
-	Smoke = Spawn(class'NN_ShockBeam',Owner,,SmokeLocation,SmokeRotation);
-	Smoke.MoveAmount = DVector/NumPoints;
-	Smoke.NumPuffs = NumPoints - 1;
-	if (bbPlayer(Owner) != None)
-		bbPlayer(Owner).xxClientDemoFix(None, class'NN_ShockBeam',SmokeLocation,,,SmokeRotation);
-}*/
 
 function Fire ( float Value )
 {
@@ -703,67 +625,6 @@ function ProcessTraceHit(Actor Other, Vector HitLocation, Vector HitNormal, Vect
 
 	if ( (Other != self) && (Other != Owner) && (Other != None) )
 		Other.TakeDamage(GetWeaponSettings().ShockBeamDamage, PawnOwner, HitLocation, 60000.0*X, MyDamageType);
-
-
-
-	/*local PlayerPawn PlayerOwner;
-	local Pawn PawnOwner;
-
-	if (Owner.IsA('Bot'))
-	{
-		Super.ProcessTraceHit(Other, HitLocation, HitNormal, X, Y, Z);
-		return;
-	}
-
-	PawnOwner = Pawn(Owner);
-
-	if (Other==None)
-	{
-		HitNormal = -X;
-		HitLocation = Owner.Location + X*10000.0;
-	}
-
-	PlayerOwner = PlayerPawn(Owner);
-
-	SpawnEffect(HitLocation, Owner.Location + CalcDrawOffset() + (FireOffset.X + 20) * X + FireOffset.Y * Y + FireOffset.Z * Z);
-
-	if ( NN_ShockProjOwnerHidden(Other)!=None )
-	{
-		AmmoType.UseAmmo(1);
-		Other.SetOwner(Owner);
-		NN_ShockProjOwnerHidden(Other).SuperExplosion();
-		return;
-	}
-	else if ( NN_ShockProj(Other)!=None )
-	{
-		AmmoType.UseAmmo(1);
-		NN_ShockProj(Other).SuperExplosion();
-		return;
-	}
-	else if (bNewNet)
-	{
-		DoRingExplosion5(PlayerPawn(Owner), HitLocation, HitNormal);
-	}
-	else
-	{
-		Spawn(class'ut_RingExplosion5',,, HitLocation+HitNormal*8,rotator(HitNormal));
-	}
-
-	if ( (Other != self) && (Other != Owner) && (Other != None) )
-	{
-		Other.TakeDamage(GetWeaponSettings().ShockBeamDamage, PawnOwner, HitLocation, 60000.0*X, MyDamageType);
-	}
-
-	if (Pawn(Other) != None && Other != Owner && Pawn(Other).Health > 0)
-	{	// We hit a pawn that wasn't the owner or dead. (How can you hit yourself? :P)
-		HitCounter++;						// +1 hit
-		if (HitCounter == 3)
-		{	// Wowsers!
-			HitCounter = 0;
-		}
-	}
-	else
-		HitCounter = 0;*/
 }
 
 simulated function DoRingExplosion5(PlayerPawn Pwner, vector HitLocation, vector HitNormal)
@@ -797,30 +658,6 @@ function SpawnEffect(vector HitLocation, vector SmokeLocation)
 		// Dont replicate to clients
 		SSB.RemoteRole = ROLE_None;
 	}
-	/*local ShockBeam Smoke;
-	local Vector DVector;
-	local int NumPoints;
-	local rotator SmokeRotation;
-
-	if (Owner.IsA('Bot'))
-	{
-		Super.SpawnEffect(HitLocation, SmokeLocation);
-		return;
-	}
-
-	DVector = HitLocation - SmokeLocation;
-	NumPoints = VSize(DVector)/135.0;
-	if ( NumPoints < 1 )
-		return;
-	SmokeRotation = rotator(DVector);
-	SmokeRotation.roll = Rand(65535);
-
-	if (bNewNet)
-		Smoke = Spawn(class'NN_ShockBeamOwnerHidden',Owner,,SmokeLocation,SmokeRotation);
-	else
-		Smoke = Spawn(class'ShockBeam',,,SmokeLocation,SmokeRotation);
-	Smoke.MoveAmount = DVector/NumPoints;
-	Smoke.NumPuffs = NumPoints - 1;*/
 }
 
 function SetSwitchPriority(pawn Other)
